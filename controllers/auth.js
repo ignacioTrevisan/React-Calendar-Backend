@@ -54,7 +54,7 @@ const logingUsuario = async (req, res = response) => {
     let usuario = await Usuario.findOne({ email: email })
 
     try {
-        if (!Usuario) {
+        if (!usuario) {
             return res.status(400).json({
                 ok: false,
                 msg: 'Un usuario no existe con ese email'

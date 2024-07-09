@@ -8,8 +8,6 @@ const { validarJWT } = require('../middlewares/validar-JWT');
 const router = Router();
 
 router.post(
-
-
     '/',
     [
         check('email', 'El formato del email no es correcto').isEmail(),
