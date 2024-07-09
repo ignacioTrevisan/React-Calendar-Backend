@@ -19,7 +19,7 @@ const crearUsuario = async (req, res = response) => {
         }
 
 
-        usuario = new usuario(req.body);
+        usuario = new Usuario(req.body);
 
 
 
