@@ -11,58 +11,74 @@ const obtenerEventos = async (req, res = response, next) => {
         msg: eventos
     })
 }
-const crearEvento = async (req, res = response, next) => {
-
+const crearEvento = async (req, res = response) => {
 
     const evento = new Evento(req.body);
 
-    evento.user = req.uid;
-
-    const eventoGuardado = await evento.save();
-
-
-    return res.status(200).json({
-        ok: true,
-        msg: 'crearEvento',
-        evento: eventoGuardado
-    })
-}
-
-const actualizarEvento = async (req, res = response, next) => {
-
-    const eventoID = req.params.id;
-
     try {
-        const evento = await Evento.findById(eventoID);
-        if (!evento) {
-            return res.status(404).json({
-                ok: false,
-                msg: 'Evento inexistente'
-            })
-        }
 
-        if (evento.user.toString() !== req.uid) {
-            res.status(401).json({
-                ok: false,
-                msg: 'No tiene permisos para realizar esta modificacion'
-            })
-        }
+        evento.user = req.uid;
 
+        const eventoGuardado = await evento.save();
 
-        const eventoActualizado = await Evento.findByIdAndUpdate(eventoID, { ...req.body }, { new: true });
-
-        return res.status(200).json({
+        res.json({
             ok: true,
-            evento: eventoActualizado
+            evento: eventoGuardado
         })
+
+
     } catch (error) {
         console.log(error)
         res.status(500).json({
             ok: false,
             msg: 'Hable con el administrador'
-        })
+        });
     }
+}
 
+const actualizarEvento = async (req, res = response) => {
+
+    const eventoId = req.params.id;
+    const uid = req.uid;
+
+    try {
+
+        const evento = await Evento.findById(eventoId);
+
+        if (!evento) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'Evento no existe por ese id'
+            });
+        }
+
+        if (evento.user.toString() !== uid) {
+            return res.status(401).json({
+                ok: false,
+                msg: 'No tiene privilegio de editar este evento'
+            });
+        }
+
+        const nuevoEvento = {
+            ...req.body,
+            user: uid
+        }
+
+        const eventoActualizado = await Evento.findByIdAndUpdate(eventoId, nuevoEvento, { new: true });
+
+        res.json({
+            ok: true,
+            evento: eventoActualizado
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Hable con el administrador'
+        });
+    }
 
 }
 

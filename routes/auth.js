@@ -26,6 +26,9 @@ router.post(
         check('email', 'El formato de email no es correcto').isEmail(),
         validarCampos
 
+
+
+
     ],
     crearUsuario)
 
