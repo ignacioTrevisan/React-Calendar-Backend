@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { crearUsuario, logingUsuario, revalidarUsuario } = require('../controllers/auth');
+const { crearUsuario, logingUsuario, revalidarUsuario, crearUsuarioConProovedor } = require('../controllers/auth');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-JWT');
@@ -25,12 +25,9 @@ router.post(
         check('password', 'El password debe ser de 6 caracteres').isLength({ min: 6 }),
         check('email', 'El formato de email no es correcto').isEmail(),
         validarCampos
-
-
-
-
     ],
     crearUsuario)
+router.post('/google', crearUsuarioConProovedor)
 
 router.get('/renew', validarJWT, revalidarUsuario)
 

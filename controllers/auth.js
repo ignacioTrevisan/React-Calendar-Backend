@@ -16,12 +16,7 @@ const crearUsuario = async (req, res = response) => {
                 msg: 'Un usuario existe con ese correo '
             })
         }
-
-
         usuario = new Usuario(req.body);
-
-
-
         const salt = bcrypt.genSaltSync();
         usuario.password = bcrypt.hashSync(password, salt);
 
@@ -36,7 +31,6 @@ const crearUsuario = async (req, res = response) => {
             email: usuario.email,
             token
         })
-        console.log("creado correctamente")
     } catch (error) {
         console.log(error)
         res.status(500).json({
@@ -98,8 +92,28 @@ const revalidarUsuario = async (req, res = response) => {
     })
 }
 
+
+const crearUsuarioConProovedor = async (req, res = response) => {
+    const { uidProvider, email, name } = req.body;
+
+    try {
+        let user = await Usuario.findOne({ email });
+        if (!user) {
+            user = new Usuario({ uidProvider, email, name });
+            console.log(uidProvider);
+            await user.save();
+        }
+        const token = await generarJWT(user._id, name);
+
+        res.json({ name: user.name, uid: user._id, token });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ msg: 'Error del servidor' });
+    }
+}
 module.exports = {
     crearUsuario,
     logingUsuario,
-    revalidarUsuario
+    revalidarUsuario,
+    crearUsuarioConProovedor
 }

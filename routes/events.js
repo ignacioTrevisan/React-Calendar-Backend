@@ -23,6 +23,8 @@ router.post(
     ],
     crearEvento)
 
+
+
 router.put('/actualizar/:id',
     [
         validarJWT,
